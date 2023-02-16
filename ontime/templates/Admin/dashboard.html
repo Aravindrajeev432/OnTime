@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+    <head>
+
+
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+        crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+        crossorigin=""></script>
+
+<!-- draw plugin -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+        
+
+
+    </head>
+    <body>
+        <h1>Hello</h1>
+        <div id="map" style="height:500px; width:500px"></div>
+        <div>
+<button id="remove_layer">Remove</button>
+        </div>
+        <script>
+
+document.getElementById("remove_layer").addEventListener("click",LayerRemover);
+
+
+            var mappoints= []
+
+            var map = L.map('map',{drawControl:false}).setView([9.03065, 76.868972], 18);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
+var drawnFeatures = new L.FeatureGroup();
+map.addLayer(drawnFeatures)
+
+
+var drawnItems = new L.FeatureGroup();
+     map.addLayer(drawnItems);
+     var drawControl = new L.Control.Draw({
+        draw:{
+            marker:true,
+            circle:false,
+            rectangle:false,
+            polyline:false,
+
+        },
+         edit: {
+             featureGroup: drawnFeatures,
+             edit:true
+         }
+     });
+     map.addControl(drawControl);
+
+    //  var ploygons = new L.Draw.Polygon()
+
+
+  
+
+// var drawpoly = new L.Draw.Polygon()
+
+
+
+map.on("draw:created",function(e){
+    // polylayers.remove();
+    var type = e.layerType;
+    var layer = e.layer;
+    console.log(layer)
+    // console.log(e.layer.toGeoJSON())
+    console.log(type)
+    if(type==='marker'){
+
+    }
+   if(type==='polygon'){
+    var shape = layer.toGeoJSON()
+    var shape_for_db = JSON.stringify(shape)
+    console.log(shape_for_db)
+   }
+    
+    
+    drawnFeatures.addLayer(layer);
+})
+
+
+
+let data={"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[76.868554,9.031026],[76.868554,9.031026],[76.868468,9.030359],[76.868468,9.030359],[76.869487,9.029924],[76.869487,9.029924],[76.869546,9.030941],[76.869546,9.030941],[76.868554,9.031026]]]}}
+var polylayers = L.geoJSON().addTo(map);
+console.log(polylayers)
+// polylayers.addData(data)
+// console.log(polylayers)
+drawnFeatures.addLayer(polylayers)
+
+// function drawmypolygon(layer){
+
+    
+// drawnFeatures.addLayer(layer)
+// }
+
+// drawmypolygon()
+
+function LayerRemover(){
+    console.log("layer remove")
+    polylayers.remove();
+}
+
+
+function SetMarkers(){
+    
+    try {
+        var marker = L.marker(...mappoints).addTo(map);
+
+    }
+    catch(err){
+console.log('empty array')
+    }
+      
+}
+
+
+
+// var circle = L.circleMarker([9.03065, 76.868972], {
+//     color: 'red',
+//     fillColor: '#f03',
+//     fillOpacity: 0.5,
+//     radius: 100
+// }).addTo(map);
+
+
+function drawpolygon(){
+
+    var polygon = L.polygon([
+ ...mappoints
+]).addTo(map);
+
+}
+
+
+// function onMapClick(e) {
+//     // console.log("You clicked the map at " + e.latlng);
+//     mappoints.push([e.latlng.lat,e.latlng.lng])
+//     var marker = L.marker(e.latlng,{
+       
+//     title:"1"}).addTo(map);
+// console.log(map)
+
+//     drawpolygon()
+// }
+
+// map.on('click', onMapClick);
+        </script>
+    </body>
+</html>
